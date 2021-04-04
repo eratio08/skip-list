@@ -1,4 +1,4 @@
-package de.elurz.skiplist
+package de.elurz.skiplist.imp
 
 import java.lang.IllegalStateException
 import kotlin.math.*
@@ -12,7 +12,7 @@ sealed class Node<V>(val index: Int, val next: MutableList<Node<V>>) {
         override fun hasLowerIndexAs(givenIndex: Int): Boolean = true
     }
 
-    object TailNode : Node<Any>(Int.MAX_VALUE, next = ArrayList(0)) {
+    object TailNode : Node<Nothing>(Int.MAX_VALUE, next = ArrayList(0)) {
         override fun hasLowerIndexAs(givenIndex: Int): Boolean = false
     }
 
@@ -24,7 +24,7 @@ class SkipList<V>(size: Int = 100, private val p: Double = 0.5) {
     private val head: Node<V> = Node.HeadNode(maxLevel)
 
     fun search(searchedIndex: Int): V? {
-        var node = head
+        var node: Node<V> = head
         val topLevel = node.next.size - 1
         // search levels
         for (i in (topLevel downTo 0)) {
@@ -35,7 +35,7 @@ class SkipList<V>(size: Int = 100, private val p: Double = 0.5) {
         }
         node = node.next[0]
         return if (node.index == searchedIndex && node is Node.ValueNode) {
-            node.value
+            node.value as V
         } else {
             null
         }
